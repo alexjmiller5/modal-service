@@ -21,9 +21,10 @@ fmt:
 logs:
     uv run modal app logs CHANGEME
 
-# Push .env.tpl secrets into the Modal secret store (no plaintext touches disk)
+# Push .env.tpl secrets into the Modal secret store (no plaintext touches disk;
+# the modal CLI rejects process-substitution FIFOs, hence the stdin script)
 sync-secrets:
-    uv run modal secret create CHANGEME --from-dotenv <(op inject -i .env.tpl) --force
+    op inject -i .env.tpl | uv run scripts/sync_secrets.py CHANGEME
 
 deploy: test sync-secrets
     uv run modal deploy app.py
