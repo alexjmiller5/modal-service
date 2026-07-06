@@ -13,8 +13,10 @@ app = modal.App(APP_NAME)
 
 image = (
     modal.Image.debian_slim(python_version="3.13")
-    .uv_sync()  # reads pyproject.toml + uv.lock
-    .add_local_python_source("core")
+    .uv_sync(extra_options="--no-dev")  # reads pyproject.toml + uv.lock; skip dev group
+    # add_local_dir, NOT add_local_python_source: the latter can't resolve
+    # packages under src/ layout, and this also carries non-.py data files.
+    .add_local_dir("src/core", remote_path="/root/core", ignore=["**/__pycache__"])
 )
 
 secrets = [modal.Secret.from_name(APP_NAME)]
