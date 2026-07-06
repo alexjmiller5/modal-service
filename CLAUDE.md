@@ -49,5 +49,5 @@ functions stay thin enough to not need tests.
 2. Fill `.env.tpl` with this app's op:// refs; add fields to `src/core/config.py`.
 3. `uv sync` && `just test`.
 4. One-time: `uv run modal token new` (local auth), then `just deploy`.
-5. CI: `gh secret set OP_SERVICE_ACCOUNT_TOKEN --body "$(op read 'op://Personal/op-service-account-personal-infra/token')"`.
+5. CI: `gh secret set OP_SERVICE_ACCOUNT_TOKEN --body "$(op read 'op://Personal/<project>-ci SA Token/token')"`.
 6. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
