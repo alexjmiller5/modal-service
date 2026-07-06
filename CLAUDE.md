@@ -14,10 +14,9 @@ runs in tests, on the mac mini via launchd, or on any future platform.
 - Endpoints use `requires_proxy_auth=True` — callers send `Modal-Key` +
   `Modal-Secret` headers (mint tokens in the Modal dashboard → Settings →
   Proxy Auth Tokens). Never expose an unauthenticated endpoint.
-- Cron budget: the Modal Starter plan allows **5 deployed crons across ALL
-  apps**. A schedule goes on Modal only if the job needs Modal's runtime;
-  otherwise use GHA cron, CF Cron Triggers, or mini launchd (see the
-  `personal-infra` skill).
+- Cron: Modal is the PREFERRED home for schedules — but the Starter plan
+  allows **5 deployed crons across ALL apps**, so track the budget. Overflow
+  goes to GHA cron or CF Cron Triggers (see the `personal-infra` skill).
 
 ## Stack
 
@@ -28,10 +27,14 @@ Instantiate `Settings()` inside functions, never at import time.
 
 ## Commands
 
+Standard verb set (see global CLAUDE.md) — the justfile is the interface,
+not a script catalog; one-offs go in `scripts/` and run directly.
+
 | Command | Purpose |
 |---|---|
 | `just dev` | Live-reload dev against real Modal infra (`modal serve`) |
-| `just test` | pytest |
+| `just test` / `just check` / `just fmt` | pytest / ruff read-only / ruff fix |
+| `just logs` | Stream deployed-app logs |
 | `just sync-secrets` | Push `.env.tpl` → Modal secret store |
 | `just deploy` | test + sync-secrets + `modal deploy` |
 
@@ -47,4 +50,4 @@ functions stay thin enough to not need tests.
 3. `uv sync` && `just test`.
 4. One-time: `uv run modal token new` (local auth), then `just deploy`.
 5. CI: `gh secret set OP_SERVICE_ACCOUNT_TOKEN --body "$(op read 'op://Personal/op-service-account-personal-infra/token')"`.
-6. Delete the `daily()` cron function if unused (cron slots are scarce).
+6. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
