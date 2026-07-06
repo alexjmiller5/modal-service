@@ -37,9 +37,9 @@ def webhook(payload: dict) -> dict:
     return {"status": "accepted", "call_id": call.object_id}
 
 
-# ponytail: Starter plan allows 5 deployed crons TOTAL across all apps —
-# prefer GHA cron / CF Cron Triggers / mini launchd unless the job needs
-# Modal's runtime. Delete this function if this service has no schedule.
+# Modal cron is the preferred home for schedules (Starter plan: 5 deployed
+# crons TOTAL across all apps — overflow to GHA cron / CF Cron Triggers).
+# Delete this function if this service has no schedule.
 @app.function(image=image, secrets=secrets, schedule=modal.Cron("30 9 * * *"))
 def daily() -> dict:
     from core.pipeline import run

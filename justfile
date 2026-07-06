@@ -7,20 +7,25 @@ default:
 dev:
     uv run modal serve app.py
 
-# Run tests
 test:
     uv run pytest
 
-lint:
+# All static analysis (read-only, CI-safe)
+check:
     uv run ruff check . && uv run ruff format --check .
 
 fmt:
     uv run ruff format . && uv run ruff check --fix .
 
+# Stream logs from the deployed app
+logs:
+    uv run modal app logs CHANGEME
+
 # Push .env.tpl secrets into the Modal secret store (no plaintext touches disk)
 sync-secrets:
     uv run modal secret create CHANGEME --from-dotenv <(op inject -i .env.tpl) --force
 
-# Test, sync secrets, deploy
 deploy: test sync-secrets
     uv run modal deploy app.py
+
+# --- project-specific recipes below (one-offs live in scripts/, run directly) ---
