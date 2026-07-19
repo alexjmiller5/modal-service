@@ -36,7 +36,15 @@ not a script catalog; one-offs go in `scripts/` and run directly.
 | `just test` / `just check` / `just fmt` | pytest / ruff read-only / ruff fix |
 | `just logs` | Stream deployed-app logs |
 | `just sync-secrets` | Push `.env.tpl` → Modal secret store |
-| `just deploy` | test + sync-secrets + `modal deploy` |
+| `just deploy` | test + sync-secrets + `modal deploy` — CI's job, not yours (below) |
+
+**Deploying = commit + push to `main`.** The GHA deploy workflow runs tests,
+syncs secrets, and deploys — never run `just deploy` locally unless there's a
+legitimate stated reason (e.g. CI itself is broken; or the one-time first
+deploy in the checklist below, before the repo/CI exists): local deploys ship
+code that isn't in git, and the next push silently reverts it. After pushing,
+verify the run with the gh CLI (`gh run watch <id> --exit-status`; on failure
+`gh run view <id> --log-failed`) — never assume the deploy succeeded.
 
 ## TDD
 
@@ -49,5 +57,13 @@ functions stay thin enough to not need tests.
 2. Fill `.env.tpl` with this app's op:// refs; add fields to `src/core/config.py`.
 3. `uv sync` && `just test`.
 4. One-time: `uv run modal token new` (local auth), then `just deploy`.
-5. CI: `gh secret set OP_SERVICE_ACCOUNT_TOKEN --body "$(op read 'op://Personal/<project>-ci SA Token/token')"`.
+5. Vault + CI: Alex runs `op-project-bootstrap .env.tpl --repo <owner/name>` — creates the project vault, the `<Project> ENV` item, the read-only CI SA, and sets the repo's `OP_SERVICE_ACCOUNT_TOKEN`.
 6. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
+
+## Not Alex? Owner-specific assumptions
+
+The code is generic; the workflow assumes Alex's setup. If you forked this:
+secrets flow through 1Password (`.env.tpl` with `op://` references,
+`op-project-bootstrap` is his private bootstrap script) — swap in your own
+secret store or `modal secret create`; Modal auth is `modal token new` on
+your workspace.
