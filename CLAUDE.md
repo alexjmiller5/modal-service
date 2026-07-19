@@ -60,10 +60,9 @@ functions stay thin enough to not need tests.
 5. Vault + CI: Alex runs `op-project-bootstrap .env.tpl --repo <owner/name>` — creates the project vault, the `<Project> ENV` item, the read-only CI SA, and sets the repo's `OP_SERVICE_ACCOUNT_TOKEN`.
 6. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
 
-## Not Alex? Owner-specific assumptions
+## Hardcoded owner assumptions
 
-The code is generic; the workflow assumes Alex's setup. If you forked this:
-secrets flow through 1Password (`.env.tpl` with `op://` references,
-`op-project-bootstrap` is his private bootstrap script) — swap in your own
-secret store or `modal secret create`; Modal auth is `modal token new` on
-your workspace.
+The code is generic, but the workflow is wired to Alex's setup for
+convenience: secrets flow through his 1Password (`.env.tpl` with `op://`
+references; `op-project-bootstrap` is his private bootstrap script) and
+deploys target his Modal workspace.
