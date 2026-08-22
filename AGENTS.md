@@ -53,12 +53,17 @@ functions stay thin enough to not need tests.
 
 ## New-project checklist (delete this section after setup)
 
-1. Replace every `CHANGEME` (app.py APP_NAME, justfile secret name, pyproject name/description).
+1. Replace every `CHANGEME` (app.py APP_NAME, justfile secret name, pyproject name/description, deploy.yml op:// refs).
 2. Fill `.env.tpl` with this app's op:// refs; add fields to `src/core/config.py`.
+   CI-only credentials (the Modal deploy token) are NOT tpl refs — they're
+   declared solely in deploy.yml's load-secrets-action env block; bootstrap
+   scans workflow files too and `scripts/provision.py` mints the Modal token
+   fields by copying the canonical workspace token from the AI Agent vault
+   (no `modal token new`, no prompt, nothing on disk — Alex's machine-wide
+   `modal` wrapper injects the same 1P-held token for local runs).
 3. `uv sync` && `just test`.
-4. One-time: `uv run modal token new` (local auth), then `just deploy`.
-5. Vault + CI: Alex runs `op-project-bootstrap .env.tpl --repo <owner/name>` — creates the project vault, the `<Project> ENV` item, the read-only CI SA, and sets the repo's `OP_SERVICE_ACCOUNT_TOKEN`.
-6. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
+4. Vault + CI: Alex runs `op-project-bootstrap .env.tpl --repo <owner/name>` — creates the project vault, the `<Project> ENV` item, the `Modal <Project>` deploy-token item (provision-minted), the read-only CI SA, and sets the repo's `OP_SERVICE_ACCOUNT_TOKEN`.
+5. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
 
 ## Hardcoded owner assumptions
 

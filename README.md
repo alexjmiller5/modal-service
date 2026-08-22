@@ -20,5 +20,8 @@ See the `new-project` skill, or manually: copy this directory, replace the
 `CHANGEME`s, fill `.env.tpl`, then `uv sync && just test && just deploy`.
 
 Manual one-time steps (cannot be codified):
-- `uv run modal token new` — authenticate this machine with Modal
 - Mint a Proxy Auth Token in the Modal dashboard for HTTP callers (iPhone Shortcuts)
+
+(No `modal token new` needed: local runs use the machine-wide `modal` wrapper
+injecting the 1P-held workspace token, and CI's copy of that token is minted
+into the project vault by `op-project-bootstrap` via `scripts/provision.py`.)
