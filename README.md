@@ -22,6 +22,6 @@ See the `new-project` skill, or manually: copy this directory, replace the
 Manual one-time steps (cannot be codified):
 - Mint a Proxy Auth Token in the Modal dashboard for HTTP callers (iPhone Shortcuts)
 
-(No `modal token new` needed: local runs use the machine-wide `modal` wrapper
+(No `modal token new` needed: local runs use the machine-wide `modal` PATH wrapper (nix-config home/scripts.nix)
 injecting the 1P-held workspace token, and CI's copy of that token is minted
 into the project vault by `op-project-bootstrap` via `scripts/provision.py`.)
