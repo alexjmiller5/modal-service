@@ -22,9 +22,10 @@ See the `new-project` skill, or manually: copy this directory, replace the
 Manual one-time steps (cannot be codified):
 - Mint a Proxy Auth Token in the Modal dashboard for HTTP callers (iPhone Shortcuts)
 
-(Local runs need no `modal token new`: the machine-wide `modal` PATH wrapper
-(nix-config `home/scripts.nix`) injects the 1P-held workspace token. CI gets
-its OWN project-scoped token, minted during `op-project-bootstrap` by
-`scripts/provision.py` - that opens one browser tab to approve, then stores
-the token in the project vault. Revoke it in Modal's dashboard to kill just
-this repo's deploys.)
+Run `op-project-bootstrap .env.tpl --repo <owner/name>` to provision the
+project vault and dedicated CI credentials. `scripts/provision.py` emits a
+Modal approval URL and verification code on stderr. The operator opens that
+URL in the configured remote browser session (agents use chrome-control)
+and approves the code. The verified token pair stays in memory until
+bootstrap writes both fields to 1Password together. No local browser opens
+and no provider config or temporary credential file is written.

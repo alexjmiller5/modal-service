@@ -57,14 +57,15 @@ functions stay thin enough to not need tests.
 2. Fill `.env.tpl` with this app's op:// refs; add fields to `src/core/config.py`.
    CI-only credentials (the Modal deploy token) are NOT tpl refs — they're
    declared solely in deploy.yml's load-secrets-action env block; bootstrap
-   scans workflow files too and `scripts/provision.py` mints a **CI token
-   dedicated to this project** (`modal token new` is browser-only, so one tab
-   opens during bootstrap and Alex approves it; revoking that token later
-   kills only this repo's deploys). Set `PROJECT` in provision.py to this
-   project's slug. Local runs need no token of their own — the machine-wide
-   `modal` PATH wrapper injects Alex's 1P-held workspace token.
+   scans workflow files too. `scripts/provision.py --batch modal-token` uses
+   the native Modal TokenFlow to mint and verify one dedicated CI token pair
+   in memory. Bootstrap saves both fields to the project vault atomically.
+   The operator opens its stderr URL in the configured remote browser session
+   (agents use chrome-control) and approves the displayed code. No local
+   browser opens and no token config or temporary credential file is written.
+   Set `PROJECT` in provision.py to this project's slug.
 3. `uv sync` && `just test`.
-4. Vault + CI: Alex runs `op-project-bootstrap .env.tpl --repo <owner/name>` — creates the project vault, the `<Project> ENV` item, the `Modal <Project>` deploy-token item (provision-minted), the read-only CI SA, and sets the repo's `OP_SERVICE_ACCOUNT_TOKEN`.
+4. Vault + CI: Alex runs `op-project-bootstrap .env.tpl --repo <owner/name>` - creates the project vault, the `<Project> ENV` item, the `<Project> CI Modal Token` deploy-token item (provision-minted), the read-only CI SA, and sets the repo's `OP_SERVICE_ACCOUNT_TOKEN`.
 5. Delete the `daily()` cron function if unused (5 cron slots total — free them when idle).
 
 ## Hardcoded owner assumptions
