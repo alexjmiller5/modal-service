@@ -7,6 +7,8 @@ on:
 
 jobs:
   deploy:
+    # The template itself has no secrets; scaffolded repos have another name.
+    if: github.repository != 'alexjmiller5/modal-service'
     runs-on: ubuntu-latest
     # The one GH secret: this project's 1Password service-account token (see
     # new-project skill). It authenticates op for BOTH reading the deploy creds
