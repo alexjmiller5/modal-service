@@ -23,10 +23,10 @@ logs:
 
 # Push .env.tpl secrets into the Modal secret store (no plaintext touches disk;
 # the modal CLI rejects process-substitution FIFOs, hence the stdin script).
-# This one drives the Modal SDK rather than the CLI, so the `modal` PATH wrapper
-# can't inject auth for it - op run does it instead.
+# It drives the Modal SDK, which authenticates from MODAL_TOKEN_ID /
+# MODAL_TOKEN_SECRET in the environment or ~/.modal.toml - the operator's own.
 sync-secrets:
-    MODAL_TOKEN_ID=op://4eeyrkqibibn7k4j6rz2fbzvxm/2sfxybjpv3c3ohzxhf5qeken4a/token_id MODAL_TOKEN_SECRET=op://4eeyrkqibibn7k4j6rz2fbzvxm/2sfxybjpv3c3ohzxhf5qeken4a/token_secret op run --no-masking -- bash -c "op inject -i .env.tpl | uv run scripts/sync_secrets.py CHANGEME"
+    op inject -i .env.tpl | uv run scripts/sync_secrets.py CHANGEME
 
 deploy: test sync-secrets
     modal deploy app.py

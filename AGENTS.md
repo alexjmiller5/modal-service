@@ -35,7 +35,7 @@ not a script catalog; one-offs go in `scripts/` and run directly.
 | `just dev` | Live-reload dev against real Modal infra (`modal serve`) |
 | `just test` / `just check` / `just fmt` | pytest / ruff read-only / ruff fix |
 | `just logs` | Stream deployed-app logs |
-| `just sync-secrets` | Push `.env.tpl` → Modal secret store |
+| `just sync-secrets` | Push `.env.tpl` → Modal secret store (Modal auth from the operator's environment or `~/.modal.toml`) |
 | `just deploy` | test + sync-secrets + `modal deploy` — CI's job, not yours (below) |
 
 **Deploying = commit + push to `main`.** The GHA deploy workflow runs tests,
